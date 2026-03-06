@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>F1 — Mic Access</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #111827; color: #e5e7eb;
+      font-family: system-ui, sans-serif;
+      display: flex; align-items: center; justify-content: center;
+      height: 100vh; padding: 1rem;
+    }
+    .card { text-align: center; }
+    p { font-size: 0.75rem; color: #9ca3af; margin-bottom: 0.75rem; }
+    .btns { display: flex; gap: 0.5rem; justify-content: center; }
+    button {
+      padding: 0.4rem 1rem; border: none; border-radius: 5px;
+      font-size: 0.8rem; font-weight: 500; cursor: pointer;
+    }
+    button:disabled { opacity: 0.4; cursor: not-allowed; }
+    #btn { background: #ef4444; color: white; }
+    #btn:hover { background: #dc2626; }
+    #cancel { background: #374151; color: #d1d5db; }
+    #cancel:hover { background: #4b5563; }
+    #msg { margin-top: 0.5rem; font-size: 0.7rem; min-height: 0.9rem; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <p>Microphone access is needed to transcribe audio.</p>
+    <div class="btns">
+      <button id="btn">Allow Microphone</button>
+      <button id="cancel">Cancel</button>
+    </div>
+    <p id="msg"></p>
+  </div>
+  <script src="mic-request.js"></script>
+</body>
+</html>

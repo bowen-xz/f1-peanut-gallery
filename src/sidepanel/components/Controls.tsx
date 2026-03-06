@@ -1,0 +1,69 @@
+import type { AudioSource, CaptureStatus } from "../../shared/types";
+
+interface Props {
+  status: CaptureStatus;
+  disabled: boolean;
+  audioSource: AudioSource;
+  onSourceChange: (source: AudioSource) => void;
+  onStart: () => void;
+  onStop: () => void;
+}
+
+const statusLabel: Record<CaptureStatus, string> = {
+  idle: "Ready",
+  capturing: "Live",
+  error: "Error",
+};
+
+const statusColor: Record<CaptureStatus, string> = {
+  idle: "bg-gray-500",
+  capturing: "bg-green-400 animate-pulse",
+  error: "bg-red-500",
+};
+
+export default function Controls({ status, disabled, audioSource, onSourceChange, onStart, onStop }: Props) {
+  const isCapturing = status === "capturing";
+
+  return (
+    <div className="flex items-center gap-3">
+      <div className="flex items-center gap-1.5">
+        <span className={`inline-block w-2 h-2 rounded-full ${statusColor[status]}`} />
+        <span className="text-xs text-gray-400">{statusLabel[status]}</span>
+      </div>
+
+      <div className="flex rounded overflow-hidden border border-gray-700">
+        {(["screen", "microphone"] as const).map((src) => (
+          <button
+            key={src}
+            onClick={() => onSourceChange(src)}
+            disabled={isCapturing}
+            className={`px-2.5 py-1 text-xs font-medium transition-colors disabled:cursor-not-allowed ${
+              audioSource === src
+                ? "bg-gray-600 text-white"
+                : "bg-gray-800 text-gray-400 hover:bg-gray-700"
+            }`}
+          >
+            {src === "screen" ? "Screen" : "Mic"}
+          </button>
+        ))}
+      </div>
+
+      {!isCapturing ? (
+        <button
+          onClick={onStart}
+          disabled={disabled}
+          className="px-3 py-1.5 text-xs rounded bg-red-600 hover:bg-red-500 disabled:opacity-40 disabled:cursor-not-allowed transition-colors font-medium"
+        >
+          Start
+        </button>
+      ) : (
+        <button
+          onClick={onStop}
+          className="px-3 py-1.5 text-xs rounded bg-gray-700 hover:bg-gray-600 transition-colors font-medium"
+        >
+          Stop
+        </button>
+      )}
+    </div>
+  );
+}
