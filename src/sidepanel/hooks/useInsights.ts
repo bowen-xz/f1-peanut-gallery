@@ -77,8 +77,8 @@ export function useInsights(
         // Step 1: extract search keywords from the transcript
         const keywordResult = await model.generateContent(
           `Current F1 broadcast transcript:\n${text}\n\n` +
-          `I want a key word to search for a reddit meme based off of the current situation (prioritize driver names, team names, and F1 Track names)` +
-          `Reply with ONLY the keyword, e.g. "Verstappen", "Safety Car"`,
+          `I want a F1 key word to search for a reddit meme based off of the current situation (prioritize driver names, and team names)` +
+          `Reply with ONLY the keyword, e.g. "Verstappen", "Mercedes"`,
         );
         const searchQuery = keywordResult.response.text().trim().replace(/^["']|["']$/g, "");
         console.log(`[Insights:meme] search query: "${searchQuery}"`);
@@ -115,9 +115,9 @@ export function useInsights(
             `F1 broadcast transcript:\n${text}\n\n` +
             `Here are ${candidates.length} memes from r/formuladank. ` +
             `Pick the one that pairs funniest with what is happening right now.\n` +
-            `Reply with ONLY two lines:\n` +
+            `Reply with ONLY two lines (INDEX and CAPTION):\n` +
             `INDEX: <number 0-${candidates.length - 1}>\n` +
-            `CAPTION: <one sentence explaining the context of the meme itself and tieing it to the current situation>`,
+            `CAPTION: <10-20 words explaining the F1 related origin / context of the meme, then 10-20 words connecting it back to the current situation>`,
         }];
 
         candidates.forEach((p, i) => {
