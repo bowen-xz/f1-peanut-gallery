@@ -77,7 +77,7 @@ export const TRANSCRIPT_WINDOW_MS = 30_000; // last N ms of final segments sent 
 
 import type { InsightType } from "../shared/types";
 
-export const INSIGHT_PROMPTS: Record<InsightType, (transcript: string) => string> = {
+export const INSIGHT_PROMPTS: Record<Exclude<InsightType, "meme">, (transcript: string) => string> = {
   engineering: (t) => `F1 broadcast transcript:\n${t}\n\nIn 1-2 sentences, give a sharp technical insight about the engineering, tyre deg, aero, power unit, or setup decisions happening right now. Be specific and concise.`,
   "driver-drama": (t) => `F1 broadcast transcript:\n${t}\n\nIn 1-2 sentences, highlight the most interesting driver moment, mistake, battle, or radio exchange right now. Be specific and punchy.`,
   drama: (t) => `F1 broadcast transcript:\n${t}\n\nIn 1-2 sentences, capture the main drama or storyline unfolding right now. Be direct and punchy.`,
@@ -91,4 +91,5 @@ export const INSIGHT_TYPE_LABELS: Record<InsightType, string> = {
   drama: "🔥 Drama",
   standings: "🏆 Standings",
   strategy: "📋 Strategy",
+  meme: "😂 Meme",
 };

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import type { InsightEntry, InsightType } from "../../shared/types";
 import { INSIGHT_TYPE_LABELS } from "../constants";
 
-const INSIGHT_TYPES: InsightType[] = ["engineering", "driver-drama", "drama", "standings", "strategy"];
+const INSIGHT_TYPES: InsightType[] = ["engineering", "driver-drama", "drama", "standings", "strategy", "meme"];
 
 interface Props {
   insights: InsightEntry[];
@@ -60,7 +60,27 @@ export default function InsightsView({ insights, onAsk, capturing }: Props) {
                 <div className="h-2 bg-gray-700 rounded w-5/6" />
               </div>
             ) : (
-              <p className="text-xs text-gray-200 leading-relaxed">{entry.text}</p>
+              <>
+                {entry.imageUrl && (
+                  <img
+                    src={entry.imageUrl}
+                    alt="meme"
+                    onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+                    className="w-full rounded-md mt-1 object-contain max-h-48"
+                  />
+                )}
+                <p className="text-xs text-gray-200 leading-relaxed">{entry.text}</p>
+                {entry.sourceUrl && (
+                  <a
+                    href={entry.sourceUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs text-red-400 hover:text-red-300 underline break-all"
+                  >
+                    View on Reddit →
+                  </a>
+                )}
+              </>
             )}
             {!entry.loading && (
               <span className="text-[10px] text-gray-600 text-right">{timeAgo(entry.timestamp)}</span>
