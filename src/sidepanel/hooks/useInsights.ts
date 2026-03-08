@@ -28,17 +28,40 @@ async function fetchImageBase64(url: string): Promise<{ mimeType: string; data: 
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function parseRedditPosts(children: any[]): RedditPost[] {
-  return children
+  const nowSecs = Date.now() / 1000;
+  const ONE_YEAR_SECS = 365 * 24 * 3600;
+
+  const posts = children
     .map((c) => c.data)
     .filter((p) => !p.is_video && !p.stickied)
     .map((p) => ({
-      title: p.title,
+      title: p.title as string,
       redditUrl: `https://www.reddit.com${p.permalink}`,
       imageUrl: (p.post_hint === "image" ? p.url : undefined)
-        ?? p.preview?.images?.[0]?.source?.url?.replace(/&amp;/g, "&"),
+        ?? p.preview?.images?.[0]?.source?.url?.replace(/&amp;/g, "&") as string | undefined,
+      score: (p.score as number) ?? 0,
+      createdUtc: (p.created_utc as number) ?? 0,
     }))
-    .filter((p): p is RedditPost & { imageUrl: string } => !!p.imageUrl)
-    .slice(0, 5);
+    .filter((p): p is typeof p & { imageUrl: string } => !!p.imageUrl);
+
+  if (posts.length === 0) return [];
+
+  const maxScore = Math.max(...posts.map((p) => p.score), 1);
+
+  // Rank by 70% normalised score + 30% recency
+  const ranked = posts
+    .map((p) => ({
+      ...p,
+      weight: 0.7 * (p.score / maxScore)
+        + 0.3 * Math.max(0, 1 - (nowSecs - p.createdUtc) / ONE_YEAR_SECS),
+    }))
+    .sort((a, b) => b.weight - a.weight)
+    .slice(0, 9); // quality pool: top 9 by combined score
+
+  // Shuffle within the pool for variety, then take 3
+  ranked.sort(() => Math.random() - 0.5);
+
+  return ranked.slice(0, 3).map(({ title, redditUrl, imageUrl }) => ({ title, redditUrl, imageUrl }));
 }
 
 export function useInsights(
@@ -117,7 +140,7 @@ export function useInsights(
             `Pick the one that pairs funniest with what is happening right now.\n` +
             `Reply with ONLY two lines (INDEX and CAPTION):\n` +
             `INDEX: <number 0-${candidates.length - 1}>\n` +
-            `CAPTION: <10-20 words explaining the F1 related origin / context of the meme, then 10-20 words connecting it back to the current situation>`,
+            `CAPTION: <20-30 words explaining the F1 origin of the meme (search on internet for additional context), then 10-20 words connecting it back to the current situation>`,
         }];
 
         candidates.forEach((p, i) => {
@@ -128,7 +151,12 @@ export function useInsights(
           }
         });
 
-        const pickResult = await model.generateContent({ contents: [{ role: "user", parts }] });
+        const visionModel = genAI.getGenerativeModel({
+          model: GEMINI_MODEL,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          tools: [{ googleSearch: {} } as any],
+        });
+        const pickResult = await visionModel.generateContent({ contents: [{ role: "user", parts }] });
         const raw = pickResult.response.text();
         console.log(`[Insights:meme] vision pick response:\n${raw}`);
 

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import type { InsightEntry, InsightType } from "../../shared/types";
 import { INSIGHT_TYPE_LABELS } from "../constants";
 
-const INSIGHT_TYPES: InsightType[] = ["engineering", "driver-drama", "drama", "standings", "strategy", "meme"];
+const INSIGHT_TYPES: InsightType[] = ["engineering", "driver-drama", "news", "strategy", "meme"];
 
 interface Props {
   insights: InsightEntry[];
