@@ -87,15 +87,17 @@ export const TRANSCRIPT_WINDOW_MS = 30_000; // last N ms of final segments sent 
 import type { InsightType } from "../shared/types";
 
 export const INSIGHT_PROMPTS: Record<Exclude<InsightType, "meme">, (transcript: string) => string> = {
-  engineering: (t) => `F1 broadcast transcript:\n${t}\n\nSearch the internet for a specific technical detail about a team this weekend (upgrade, tyre choice, car setup). Explain what it is and why it matters right now. Write for someone new to F1. Under 60 words.`,
-  "driver-drama": (t) => `F1 broadcast transcript:\n${t}\n\nFind one specific fact about the driver or team in focus right now — or a historical F1 moment that connects — and connect it to the current moment. Write for someone new to F1, Under 60 words.`,
-  news: (t) => `F1 broadcast transcript:\n${t}\n\nSearch for one specific recent news detail from this race weekend (qualifying, practice, team news) that is relevant right now. Explain it clearly to a new F1 fan. Under 60 words.`,
-  strategy: (t) => `F1 broadcast transcript:\n${t}\n\nExplain the strategy decision happening right now— i.e what are teams/drivers trying to achieve and what is their plan, what the team chose to do with tyres or pit stops and why it matters, etc. Plain English for a new F1 fan. Under 60 words.`,
+  engineer: (t) => `F1 live broadcast transcript:\n${t}\n\nSearch the internet for a specific technical detail about a team this weekend (upgrade, tyre choice, car setup). Explain what it is and why it matters right now. Write for someone new to F1. Under 60 words.`,
+  story: (t) => `F1 live broadcast transcript:\n${t}\n\nFind one specific fact about the driver or team in focus right now — or a historical F1 moment — which connects to the current broadcast. Write for someone new to F1, Under 60 words.`,
+  drama: (t) => `F1 live broadcast transcript:\n${t}\n\nSearch online for one specific piece of drama, or controversy happening, between drivers, teams, or the FIA, that conencts to the broadcast right now. Explain it clearly to someone new to F1. Under 60 words.`,
+  news: (t) => `F1 live broadcast transcript:\n${t}\n\nSearch for one specific recent news detail from this race weekend (qualifying, practice, team news) that connects to the broadcast right now. Explain it clearly to a new F1 fan. Under 60 words.`,
+  strategy: (t) => `F1 live broadcast transcript:\n${t}\n\nExplain the strategy decision happening right now— i.e what are teams/drivers trying to achieve and what is their plan, what the team chose to do with tyres or pit stops and why it matters, etc. Plain English for a new F1 fan. Under 60 words.`,
 };
 
 export const INSIGHT_TYPE_LABELS: Record<InsightType, string> = {
-  engineering: "⚙️ Engineering",
-  "driver-drama": "🍿 Drama",
+  engineer: "⚙️ Engineer",
+  story: "🎞️ Story",
+  drama: "🍿 Drama",
   news: "📰 News",
   strategy: "📋 Strategy",
   meme: "🐸 Meme",

@@ -42,7 +42,6 @@ function waitForMicPermission(): Promise<"granted" | "cancelled"> {
 export function useCapture(apiKey: string, audioSource: AudioSource) {
   const [status, setStatus] = useState<CaptureStatus>("idle");
   const [transcript, setTranscript] = useState<TranscriptEntry[]>([]);
-  const [error, setError] = useState<string | null>(null);
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const wsRef = useRef<WebSocket | null>(null);
@@ -97,7 +96,6 @@ export function useCapture(apiKey: string, audioSource: AudioSource) {
 
   const start = useCallback(async () => {
     setTranscript([]);
-    setError(null);
     pendingInterimIdRef.current = null;
 
     try {
@@ -110,7 +108,7 @@ export function useCapture(apiKey: string, audioSource: AudioSource) {
         if (permStatus.state !== "granted") {
           const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
           if (!tab?.id || !(tab.url ?? "").startsWith("http")) {
-            setError("Open any webpage in the tab behind this panel, then click Start.");
+            console.error("Open any webpage in the tab behind this panel, then click Start.");
             return;
           }
 
@@ -143,7 +141,7 @@ export function useCapture(apiKey: string, audioSource: AudioSource) {
       ws.onmessage = handleWsMessage;
       ws.onerror = () => {
         setStatus("error");
-        setError("Deepgram connection error — check your API key");
+        console.error("Deepgram connection error — check your API key");
         stopRef.current();
       };
       ws.onclose = () => setStatus((s) => (s === "capturing" ? "idle" : s));
@@ -161,9 +159,9 @@ export function useCapture(apiKey: string, audioSource: AudioSource) {
       };
     } catch (err) {
       setStatus("error");
-      setError(String(err));
+      console.error(err);
     }
   }, [apiKey, audioSource, handleWsMessage]);
 
-  return { status, transcript, error, start, stop };
+  return { status, transcript, start, stop };
 }

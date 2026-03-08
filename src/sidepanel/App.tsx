@@ -11,7 +11,7 @@ const GEMINI_KEY = import.meta.env.VITE_GEMINI_API_KEY ?? "";
 
 export default function App() {
   const [audioSource, setAudioSource] = useState<AudioSource>("screen");
-  const { status, transcript, error, start, stop } = useCapture(DEEPGRAM_KEY, audioSource);
+  const { status, transcript, start, stop } = useCapture(DEEPGRAM_KEY, audioSource);
   const { insights, triggerNow } = useInsights(GEMINI_KEY, transcript, status === "capturing");
 
   return (
@@ -31,13 +31,7 @@ export default function App() {
           onStop={stop}
         />
 
-        {error && (
-          <p className="text-red-400 text-xs px-2 py-1 bg-red-950 rounded border border-red-800">
-            {error}
-          </p>
-        )}
-
-        <TranscriptView entries={transcript} />
+<TranscriptView entries={transcript} />
 
         <InsightsView
           insights={insights}

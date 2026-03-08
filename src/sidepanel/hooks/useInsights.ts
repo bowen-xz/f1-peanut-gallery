@@ -95,9 +95,20 @@ export function useInsights(
   transcript: TranscriptEntry[],
   active: boolean,
 ) {
-  const [insights, setInsights] = useState<InsightEntry[]>([]);
+  const [insights, setInsights] = useState<InsightEntry[]>(() => {
+    try {
+      const saved = localStorage.getItem("f1_insights");
+      return saved ? (JSON.parse(saved) as InsightEntry[]) : [];
+    } catch {
+      return [];
+    }
+  });
   const lastSentTextRef = useRef("");
   const transcriptRef = useRef(transcript);
+
+  useEffect(() => {
+    localStorage.setItem("f1_insights", JSON.stringify(insights.slice(-50)));
+  }, [insights]);
 
   useEffect(() => {
     transcriptRef.current = transcript;
@@ -120,7 +131,11 @@ export function useInsights(
     try {
       const { GoogleGenerativeAI } = await import("@google/generative-ai");
       const genAI = new GoogleGenerativeAI(geminiKey);
-      const model = genAI.getGenerativeModel({ model: GEMINI_MODEL });
+      const model = genAI.getGenerativeModel({
+          model: GEMINI_MODEL,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          generationConfig: { thinkingConfig: { thinkingBudget: 512 } } as any,
+        });
 
       if (type === "meme") {
         // Step 1: extract search keywords from the transcript
@@ -165,7 +180,7 @@ export function useInsights(
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const parts: any[] = [{
           text:
-            `F1 broadcast transcript:\n${text}\n\n` +
+            `F1 live broadcast transcript:\n${text}\n\n` +
             `Here are ${candidates.length} memes from r/formuladank. ` +
             `Pick the one that pairs best with what is happening right now, prioritize memes that are picture heavy (not mainly text).\n` +
             `Each meme includes its post date and top comments to help you understand its F1 context — use these alongside a web search to write an accurate caption.\n` +

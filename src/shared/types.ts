@@ -9,7 +9,7 @@ export type CaptureStatus = "idle" | "capturing" | "error";
 
 export type AudioSource = "screen" | "microphone";
 
-export type InsightType = "engineering" | "driver-drama" | "news" | "strategy" | "meme";
+export type InsightType = "engineer" | "story" | "drama" | "news" | "strategy" | "meme";
 
 export interface InsightEntry {
   id: string;

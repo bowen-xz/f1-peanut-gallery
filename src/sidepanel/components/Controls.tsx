@@ -32,20 +32,32 @@ export default function Controls({ status, disabled, audioSource, onSourceChange
       </div>
 
       <div className="flex rounded overflow-hidden border border-gray-700">
-        {(["screen", "microphone"] as const).map((src) => (
-          <button
-            key={src}
-            onClick={() => onSourceChange(src)}
+        <button
+            key="screen"
+            onClick={() => onSourceChange("screen")}
             disabled={isCapturing}
+            title="Share your screen's audio"
             className={`px-3 py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed ${
-              audioSource === src
+              audioSource === "screen"
                 ? "bg-gray-600 text-white"
                 : "bg-gray-800 text-gray-400 hover:bg-gray-700"
             }`}
           >
-            {src === "screen" ? "Screen" : "Mic"}
+            Screen
           </button>
-        ))}
+          <button
+            key="microphone"
+            onClick={() => onSourceChange("microphone")}
+            disabled={isCapturing}
+            title="Share mic to hear live TV audio"
+            className={`px-3 py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed ${
+              audioSource === "microphone"
+                ? "bg-gray-600 text-white"
+                : "bg-gray-800 text-gray-400 hover:bg-gray-700"
+            }`}
+          >
+            Mic
+          </button>
       </div>
 
       {!isCapturing ? (

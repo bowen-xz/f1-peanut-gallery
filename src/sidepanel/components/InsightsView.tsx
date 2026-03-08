@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import type { InsightEntry, InsightType } from "../../shared/types";
 import { INSIGHT_TYPE_LABELS } from "../constants";
 
-const INSIGHT_TYPES: InsightType[] = ["engineering", "driver-drama", "news", "strategy", "meme"];
+const INSIGHT_TYPES: InsightType[] = ["engineer", "story", "drama", "news", "strategy", "meme"];
 
 interface Props {
   insights: InsightEntry[];
@@ -105,6 +105,7 @@ export default function InsightsView({ insights, onAsk, capturing }: Props) {
               key={type}
               onClick={() => onAsk(type)}
               disabled={!capturing || hasInFlight}
+              title={!capturing ? "Press Start to use" : undefined}
               className="px-4 py-1.5 text-sm rounded-full bg-gray-800 border border-gray-700 hover:border-red-500 hover:text-red-400 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >
               {INSIGHT_TYPE_LABELS[type]}
