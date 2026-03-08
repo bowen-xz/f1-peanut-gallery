@@ -63,7 +63,7 @@ export const F1_KEYWORDS = [
   "prime:1", "option:1",
 
   // Power unit & technical
-  "power unit:2", "ERS:2", "MGU-K:2", "MGU-H:2", "ICE:2",
+  "power unit:2", "MGU-K:2", "MGU-H:2",
   "deployment:2", "harvesting:2", "fuel load:2", "fuel mapping:2",
   "downforce:2", "oversteer:2", "understeer:2", "balance:1",
   "front wing:2", "rear wing:2", "diffuser:2", "floor:1",
