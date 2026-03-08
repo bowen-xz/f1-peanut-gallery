@@ -7,6 +7,8 @@ const INSIGHT_TYPES: InsightType[] = ["engineer", "story", "drama", "news", "str
 interface Props {
   insights: InsightEntry[];
   onAsk: (type: InsightType) => void;
+  onDelete: (id: string) => void;
+  onClear: () => void;
   capturing: boolean;
 }
 
@@ -17,7 +19,7 @@ function timeAgo(timestamp: number): string {
   return `${Math.floor(secs / 60)}m ago`;
 }
 
-export default function InsightsView({ insights, onAsk, capturing }: Props) {
+export default function InsightsView({ insights, onAsk, onDelete, onClear, capturing }: Props) {
   const [, setTick] = useState(0);
   const bottomRef = useRef<HTMLDivElement>(null);
 
@@ -34,9 +36,19 @@ export default function InsightsView({ insights, onAsk, capturing }: Props) {
 
   return (
     <div className="flex flex-col flex-1 min-h-0 gap-4">
-      <span className="text-sm text-gray-400 font-medium uppercase tracking-wide flex-shrink-0">
-        Paddock Intelligence
-      </span>
+      <div className="flex items-center justify-between flex-shrink-0">
+        <span className="text-sm text-gray-400 font-medium uppercase tracking-wide">
+          Paddock Intelligence
+        </span>
+        {insights.length > 0 && (
+          <button
+            onClick={onClear}
+            className="text-xs text-gray-600 hover:text-red-400 transition-colors"
+          >
+            Clear all
+          </button>
+        )}
+      </div>
 
       {/* Chat history */}
       <div className="flex-1 overflow-y-auto chat-scroll flex flex-col gap-5 pr-2">
@@ -47,10 +59,20 @@ export default function InsightsView({ insights, onAsk, capturing }: Props) {
         )}
         {insights.map((entry) => (
           <div key={entry.id} className="bubble-in flex flex-col items-start gap-3">
-            {/* Type label above bubble */}
-            <span className="text-xs text-gray-500 font-medium pl-1">
-              {INSIGHT_TYPE_LABELS[entry.type]}
-            </span>
+            {/* Type label + delete button */}
+            <div className="flex items-center justify-between w-full px-1">
+              <span className="text-xs text-gray-500 font-medium">
+                {INSIGHT_TYPE_LABELS[entry.type]}
+              </span>
+              {!entry.loading && (
+                <button
+                  onClick={() => onDelete(entry.id)}
+                  className="text-xs text-gray-700 hover:text-red-400 transition-colors"
+                >
+                  ✕
+                </button>
+              )}
+            </div>
 
             {/* iMessage-style bubble: rounded-2xl, flat top-left corner for "tail" */}
             <div className="bg-gray-800 rounded-2xl rounded-tl-md px-5 py-4 max-w-[92%] flex flex-col gap-3">

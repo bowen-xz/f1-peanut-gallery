@@ -12,7 +12,7 @@ const GEMINI_KEY = import.meta.env.VITE_GEMINI_API_KEY ?? "";
 export default function App() {
   const [audioSource, setAudioSource] = useState<AudioSource>("screen");
   const { status, transcript, start, stop } = useCapture(DEEPGRAM_KEY, audioSource);
-  const { insights, triggerNow } = useInsights(GEMINI_KEY, transcript, status === "capturing");
+  const { insights, triggerNow, deleteInsight, clearInsights } = useInsights(GEMINI_KEY, transcript, status === "capturing");
 
   return (
     <div className="flex flex-col h-screen bg-gray-950 text-gray-100 font-sans">
@@ -36,6 +36,8 @@ export default function App() {
         <InsightsView
           insights={insights}
           onAsk={triggerNow}
+          onDelete={deleteInsight}
+          onClear={clearInsights}
           capturing={status === "capturing"}
         />
       </div>

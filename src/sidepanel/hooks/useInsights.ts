@@ -232,8 +232,18 @@ export function useInsights(
           tools: [{ googleSearch: {} } as any],
         }).generateContent(prompt);
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const raw = result.response as any;
+        console.log(`[Insights:${type}] finishReason=${raw.candidates?.[0]?.finishReason} text="${result.response.text()}"`);
+        console.log(`[Insights:${type}] full response:`, raw);
+
+        const responseText = raw.candidates?.[0]?.content?.parts
+          ?.filter((p: { text?: string }) => p.text)
+          .map((p: { text: string }) => p.text)
+          .join("") || result.response.text();
+
         setInsights((prev) =>
-          prev.map((e) => (e.id === id ? { ...e, text: result.response.text(), loading: false } : e)),
+          prev.map((e) => (e.id === id ? { ...e, text: responseText, loading: false } : e)),
         );
       }
     } catch (err) {
@@ -262,5 +272,13 @@ export function useInsights(
     return () => clearInterval(id);
   }, [active, geminiKey, autoPoll]);
 
-  return { insights, triggerNow };
+  const deleteInsight = useCallback((id: string) => {
+    setInsights((prev) => prev.filter((e) => e.id !== id));
+  }, []);
+
+  const clearInsights = useCallback(() => {
+    setInsights([]);
+  }, []);
+
+  return { insights, triggerNow, deleteInsight, clearInsights };
 }
