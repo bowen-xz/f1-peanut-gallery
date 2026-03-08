@@ -16,12 +16,12 @@ export default function App() {
 
   return (
     <div className="flex flex-col h-screen bg-gray-950 text-gray-100 font-sans">
-      <header className="px-4 py-3 bg-gray-900 border-b border-gray-800 flex items-center gap-2">
-        <span className="text-red-500 font-bold text-lg">F1</span>
-        <span className="text-gray-300 text-sm font-medium">Peanut Gallery</span>
+      <header className="px-5 py-4 bg-gray-900 border-b border-gray-800 flex items-center gap-3">
+        <span className="text-red-500 font-bold text-xl">F1</span>
+        <span className="text-gray-300 text-base font-medium">Peanut Gallery</span>
       </header>
 
-      <div className="flex flex-col gap-3 p-4 flex-1 overflow-hidden">
+      <div className="flex flex-col gap-5 p-5 flex-1 overflow-hidden">
         <Controls
           status={status}
           disabled={!DEEPGRAM_KEY}

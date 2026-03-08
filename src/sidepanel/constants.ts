@@ -86,8 +86,8 @@ export const INSIGHT_PROMPTS: Record<Exclude<InsightType, "meme">, (transcript: 
 
 export const INSIGHT_TYPE_LABELS: Record<InsightType, string> = {
   engineering: "⚙️ Engineering",
-  "driver-drama": "🎭 Drama",
+  "driver-drama": "🍿 Drama",
   news: "📰 News",
   strategy: "📋 Strategy",
-  meme: "😂 Meme",
+  meme: "😆 Meme",
 };

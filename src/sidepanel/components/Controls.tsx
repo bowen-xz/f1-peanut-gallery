@@ -25,10 +25,10 @@ export default function Controls({ status, disabled, audioSource, onSourceChange
   const isCapturing = status === "capturing";
 
   return (
-    <div className="flex items-center gap-3">
-      <div className="flex items-center gap-1.5">
-        <span className={`inline-block w-2 h-2 rounded-full ${statusColor[status]}`} />
-        <span className="text-xs text-gray-400">{statusLabel[status]}</span>
+    <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2">
+        <span className={`inline-block w-2.5 h-2.5 rounded-full ${statusColor[status]}`} />
+        <span className="text-sm text-gray-400">{statusLabel[status]}</span>
       </div>
 
       <div className="flex rounded overflow-hidden border border-gray-700">
@@ -37,7 +37,7 @@ export default function Controls({ status, disabled, audioSource, onSourceChange
             key={src}
             onClick={() => onSourceChange(src)}
             disabled={isCapturing}
-            className={`px-2.5 py-1 text-xs font-medium transition-colors disabled:cursor-not-allowed ${
+            className={`px-3 py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed ${
               audioSource === src
                 ? "bg-gray-600 text-white"
                 : "bg-gray-800 text-gray-400 hover:bg-gray-700"
@@ -52,14 +52,14 @@ export default function Controls({ status, disabled, audioSource, onSourceChange
         <button
           onClick={onStart}
           disabled={disabled}
-          className="px-3 py-1.5 text-xs rounded bg-red-600 hover:bg-red-500 disabled:opacity-40 disabled:cursor-not-allowed transition-colors font-medium"
+          className="px-4 py-2 text-sm rounded bg-red-600 hover:bg-red-500 disabled:opacity-40 disabled:cursor-not-allowed transition-colors font-medium"
         >
           Start
         </button>
       ) : (
         <button
           onClick={onStop}
-          className="px-3 py-1.5 text-xs rounded bg-gray-700 hover:bg-gray-600 transition-colors font-medium"
+          className="px-4 py-2 text-sm rounded bg-gray-700 hover:bg-gray-600 transition-colors font-medium"
         >
           Stop
         </button>
