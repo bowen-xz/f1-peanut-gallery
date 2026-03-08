@@ -8,7 +8,7 @@ import {
   TRANSCRIPT_WINDOW_MS,
 } from "../constants";
 
-type RedditPost = { title: string; redditUrl: string; imageUrl?: string };
+type RedditPost = { title: string; redditUrl: string; imageUrl?: string; createdUtc: number };
 
 async function fetchImageBase64(url: string): Promise<{ mimeType: string; data: string } | null> {
   try {
@@ -27,9 +27,35 @@ async function fetchImageBase64(url: string): Promise<{ mimeType: string; data: 
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function fetchPostComments(redditUrl: string): Promise<string[]> {
+  try {
+    const res = await fetch(`${redditUrl}.json?limit=10&sort=top`, {
+      headers: { Accept: "application/json" },
+    });
+    if (!res.ok) return [];
+    const json = await res.json();
+    // json[1] is the comments listing
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const children: any[] = json[1]?.data?.children ?? [];
+    return children
+      .map((c) => c.data?.body as string)
+      .filter((b) => b && b !== "[deleted]" && b !== "[removed]")
+      .slice(0, 4);
+  } catch {
+    return [];
+  }
+}
+
+function formatDate(utcSecs: number): string {
+  return new Date(utcSecs * 1000).toLocaleDateString("en-US", {
+    year: "numeric", month: "long", day: "numeric",
+  });
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function parseRedditPosts(children: any[]): RedditPost[] {
   const nowSecs = Date.now() / 1000;
-  const ONE_YEAR_SECS = 365 * 24 * 3600;
+  const ONE_MONTH_SECS = 30 * 24 * 3600;
 
   const posts = children
     .map((c) => c.data)
@@ -48,12 +74,12 @@ function parseRedditPosts(children: any[]): RedditPost[] {
 
   const maxScore = Math.max(...posts.map((p) => p.score), 1);
 
-  // Rank by 70% normalised score + 30% recency
+  // Rank by 70% normalised score + 30% recency (1-month window)
   const ranked = posts
     .map((p) => ({
       ...p,
       weight: 0.7 * (p.score / maxScore)
-        + 0.3 * Math.max(0, 1 - (nowSecs - p.createdUtc) / ONE_YEAR_SECS),
+        + 0.3 * Math.max(0, 1 - (nowSecs - p.createdUtc) / ONE_MONTH_SECS),
     }))
     .sort((a, b) => b.weight - a.weight)
     .slice(0, 9); // quality pool: top 9 by combined score
@@ -61,7 +87,7 @@ function parseRedditPosts(children: any[]): RedditPost[] {
   // Shuffle within the pool for variety, then take 3
   ranked.sort(() => Math.random() - 0.5);
 
-  return ranked.slice(0, 3).map(({ title, redditUrl, imageUrl }) => ({ title, redditUrl, imageUrl }));
+  return ranked.slice(0, 3).map(({ title, redditUrl, imageUrl, createdUtc }) => ({ title, redditUrl, imageUrl, createdUtc }));
 }
 
 export function useInsights(
@@ -108,7 +134,7 @@ export function useInsights(
 
         // Step 2: search r/formuladank with keywords
         const searchRes = await fetch(
-          `https://www.reddit.com/r/formuladank/search.json?q=${encodeURIComponent(searchQuery)}&sort=top&t=year&restrict_sr=1&limit=10`,
+          `https://www.reddit.com/r/formuladank/search.json?q=${encodeURIComponent(searchQuery)}&sort=top&t=month&restrict_sr=1&limit=10`,
           { headers: { Accept: "application/json" } },
         );
         if (!searchRes.ok) throw new Error(`Reddit search failed: ${searchRes.status}`);
@@ -129,24 +155,34 @@ export function useInsights(
 
         if (candidates.length === 0) throw new Error("No image posts found");
 
-        // Step 3: fetch images and ask Gemini Vision to pick the most relevant
-        const imageData = await Promise.all(candidates.map((p) => fetchImageBase64(p.imageUrl!)));
+        // Step 3: fetch images and top comments for all candidates in parallel
+        const [imageData, commentsData] = await Promise.all([
+          Promise.all(candidates.map((p) => fetchImageBase64(p.imageUrl!))),
+          Promise.all(candidates.map((p) => fetchPostComments(p.redditUrl))),
+        ]);
 
+        // Step 4: ask Gemini Vision to pick the most relevant, with enriched context
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const parts: any[] = [{
           text:
             `F1 broadcast transcript:\n${text}\n\n` +
             `Here are ${candidates.length} memes from r/formuladank. ` +
-            `Pick the one that pairs funniest with what is happening right now.\n` +
+            `Pick the one that pairs best with what is happening right now, prioritize memes that are picture heavy (not mainly text).\n` +
+            `Each meme includes its post date and top comments to help you understand its F1 context — use these alongside a web search to write an accurate caption.\n` +
             `Reply with ONLY two lines (INDEX and CAPTION):\n` +
             `INDEX: <number 0-${candidates.length - 1}>\n` +
-            `CAPTION: <20-30 words explaining the F1 origin of the meme (search on internet for additional context), then 10-20 words connecting it back to the current situation>`,
+            `CAPTION: <use under 20 words to accurately describe the F1 origin and context of the meme (use comments and web search to ensure accuracy), then under 20 words providing a funny comment on it based on the meme and the race>`,
         }];
 
         candidates.forEach((p, i) => {
           const img = imageData[i];
           if (img) {
-            parts.push({ text: `Meme ${i}: "${p.title}"` });
+            const comments = commentsData[i];
+            let context = `Meme ${i}: "${p.title}" — posted ${formatDate(p.createdUtc)}`;
+            if (comments.length > 0) {
+              context += `\nTop comments:\n${comments.map((c, j) => `  ${j + 1}. "${c}"`).join("\n")}`;
+            }
+            parts.push({ text: context });
             parts.push({ inlineData: img });
           }
         });
