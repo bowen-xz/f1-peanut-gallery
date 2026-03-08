@@ -10,25 +10,38 @@ export const DEEPGRAM_PARAMS: Record<string, string> = {
 };
 
 export const F1_KEYWORDS = [
-  // Drivers
+  // Drivers — last name
   "Verstappen:2", "Hamilton:2", "Leclerc:2", "Norris:2", "Piastri:2",
   "Sainz:2", "Alonso:2", "Russell:2", "Perez:2", "Stroll:2",
   "Gasly:2", "Ocon:2", "Bottas:2", "Tsunoda:2", "Ricciardo:2",
   "Magnussen:2", "Hulkenberg:2", "Albon:2", "Bearman:2", "Doohan:2",
   "Antonelli:2", "Hadjar:2", "Lawson:2", "Bortoleto:2", "Colapinto:2",
 
+  // Drivers — first name
+  "Max:1", "Lewis:2", "Charles:2", "Lando:2", "Oscar:2",
+  "Carlos:2", "Fernando:2", "George:2", "Checo:1", "Sergio:1", "Lance:1",
+  "Pierre:1", "Esteban:1", "Valtteri:1", "Yuki:2", "Daniel:1",
+  "Kevin:1", "Nico:1", "Alexander:1", "Oliver:1", "Jack:1",
+  "Kimi:2", "Isack:2", "Liam:1", "Gabriel:1", "Franco:2",
+
+  // Drivers — full name
+  "Max Verstappen:2", "Lewis Hamilton:2", "Charles Leclerc:2", "Lando Norris:2", "Oscar Piastri:2",
+  "Carlos Sainz:2", "Fernando Alonso:2", "George Russell:2", "Sergio Perez:2", "Lance Stroll:2",
+  "Pierre Gasly:2", "Esteban Ocon:2", "Valtteri Bottas:2", "Yuki Tsunoda:2", "Daniel Ricciardo:2",
+  "Kevin Magnussen:2", "Nico Hulkenberg:2", "Alexander Albon:2", "Oliver Bearman:2", "Jack Doohan:2",
+  "Kimi Antonelli:2", "Isack Hadjar:2", "Liam Lawson:2", "Gabriel Bortoleto:2", "Franco Colapinto:2",
+
   // Teams
   "Ferrari:2", "McLaren:2", "Mercedes:2", "Haas:2", "Sauber:2",
   "Alpine:2", "Williams:2", "Scuderia:1",
 
   // Team principals & key personnel
-  "Horner:2", "Wolff:2", "Vasseur:2", "Newey:2", "Lambiase:2",
-  "Bonnington:2",
+  "Horner:2", "Wolff:2", "Vasseur:2", "Newey:2",
 
   // Race events & flags
-  "DRS:2", "VSC:2", "DNF:2", "DNS:2", "DSQ:2", "FCY:2",
+  "DRS:2", "VSC:2", "DNF:2",
   "safety car:2", "virtual safety car:2", "formation lap:2",
-  "parc ferme:2", "drive-through:2", "podium:2",
+  "drive-through:2", "podium:2",
   "pole position:2", "fastest lap:2", "chequered flag:2",
   "yellow flag:2", "red flag:2", "blue flag:2",
   "track limits:2", "lap deleted:2", "stewards:2",
@@ -55,19 +68,15 @@ export const F1_KEYWORDS = [
   "downforce:2", "oversteer:2", "understeer:2", "balance:1",
   "front wing:2", "rear wing:2", "diffuser:2", "floor:1",
   "sidepod:2", "suspension:1", "gearbox:2", "turbo:1",
-  "brake duct:2", "brake bias:2", "trail braking:2",
-  "rake:1", "ride height:2", "wing angle:2",
+  "brake duct:2", "brake bias:2", "ride height:2", "wing angle:2",
 
   // Championship
   "constructor championship:2", "driver championship:2",
-  "WCC:2", "WDC:2", "championship leader:2", "points gap:2",
+  "championship leader:2", "points gap:2",
 
   // Circuits
-  "Eau Rouge:2", "Raidillon:2", "Maggots:2", "Becketts:2",
-  "Copse:2", "Stowe:2", "hairpin:1", "chicane:1", "apex:1",
-  "Interlagos:2", "Monza:2", "Silverstone:2", "Suzuka:2",
-  "Zandvoort:2", "Baku:2", "Jeddah:2", "Lusail:2", "Yas Marina:2",
-  "Circuit de Barcelona:2", "Albert Park:2", "Miami:1",
+  "hairpin:1", "chicane:1", "apex:1",
+  
 ];
 
 // ── Insights ───────────────────────────────────────────────────────────────
