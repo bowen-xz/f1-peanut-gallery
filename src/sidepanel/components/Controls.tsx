@@ -43,20 +43,20 @@ export default function Controls({ status, disabled, audioSource, onSourceChange
                 : "bg-gray-800 text-gray-400 hover:bg-gray-700"
             }`}
           >
-            Screen
+            🖥️ Screen
           </button>
           <button
             key="microphone"
             onClick={() => onSourceChange("microphone")}
             disabled={isCapturing}
-            title="Share mic to hear live TV audio"
+            title="Use mic to hear live TV audio"
             className={`px-3 py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed ${
               audioSource === "microphone"
                 ? "bg-gray-600 text-white"
                 : "bg-gray-800 text-gray-400 hover:bg-gray-700"
             }`}
           >
-            Mic
+            🎙️ Mic
           </button>
       </div>
 
