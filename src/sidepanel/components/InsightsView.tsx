@@ -16,7 +16,9 @@ function timeAgo(timestamp: number): string {
   const secs = Math.floor((Date.now() - timestamp) / 1000);
   if (secs < 10) return "just now";
   if (secs < 60) return `${secs}s ago`;
-  return `${Math.floor(secs / 60)}m ago`;
+  if (secs < 3600) return `${Math.floor(secs / 60)}m ago`;
+  if (secs < 86400) return `${Math.floor(secs / 3600)}h ago`;
+  return `${Math.floor(secs / 86400)}d ago`;
 }
 
 export default function InsightsView({ insights, onAsk, onDelete, onClear, capturing }: Props) {
